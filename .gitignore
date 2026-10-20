@@ -1,0 +1,40 @@
+# Secrets and local environment settings (keep the configuration template)
+.env
+.env.*
+!.env.example
+
+# Python environments, caches and build output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local chats, issue databases, vector indexes and generated reports
+/data/
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Original business documents in this project
+/Process_Issue_Tracking.xlsx
+/xiangmu (1).docx
+~$*
+
+# Frontend dependencies and local logs
+node_modules/
+*.log
+
+# Local editor and operating system files
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

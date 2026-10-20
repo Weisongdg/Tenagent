@@ -1,0 +1,14 @@
+**No.{{ result.issue.no }}｜{% if context %}{{ context }} {% endif %}{{ analysis.title }}**
+
+**日期：**{{ date_text }}
+**负责人：**{{ owner }}
+**问题状态：**{{ status }}
+**问题：**{{ problem }}。
+**原因线索：**{{ causes | join('；') if causes else '当前记录未提供原因线索' }}。
+**处理措施：**{{ actions | join('；') if actions else '当前记录未提供处理措施' }}。
+**有效性：**{{ verifications | join('；') if verifications else '当前记录未提供针对措施的有效性验证' }}。
+**待补充：**{{ missing_information | join('；') if missing_information else '本次未列出，不代表记录已完整' }}。
+{% if warnings %}
+**待核对：**{{ warnings | join('；') }}。
+{% endif %}
+**来源：**第 {{ result.issue.source_row }} 行{% if cells %}，主要依据 {{ cells | join('、') }}{% endif %}。

@@ -1,0 +1,67 @@
+# 问题汇总报告
+
+## 报告范围
+
+- 生成时间：{{ report.generated_at }}（UTC+08:00）。
+- 数据：当前已入库原始记录，未重新读取 Excel。
+{% for field, value in report.filters.items() if field in labels and value is not none %}
+- {{ labels[field] }}：{{ value }}。
+{% endfor %}
+{% if report.filters.keywords %}
+- 字面检索词：{{ report.filters.keywords|join('、') }}；规则：{{ report.filters.keyword_mode }}。
+{% endif %}
+- 未指定的条件不作限制；不同来源分别计数，不自动合并同号记录。
+{% for file, sheet in report.sources %}
+- 来源：{{ file }} › {{ sheet }}。
+{% endfor %}
+- 报告文件：{{ report.file_path }}。
+
+问题总数：**{{ report.total }} 条**。原记录标为已关闭 {{ report.closed_count }} 条；明确未关闭 {{ report.open_count }} 条；关闭状态待确认 {{ report.uncertain_count }} 条。三者之和等于问题总数。
+
+## 问题分布
+{% for distribution in report.distributions %}
+
+### 按{{ distribution.label }}统计
+{% for group in distribution.groups %}
+
+- {{ group.value|display }}：{{ group.count }} 条。
+{% else %}
+
+当前范围无记录。
+{% endfor %}
+{% endfor %}
+
+## 未关闭问题（{{ report.open_count }} 条）
+
+仅列原始状态为 Open 或 under tracking 的记录（忽略大小写和首尾空白）。状态不明确的问题列在待确认事项中。
+{% for item in report.open_issues %}
+
+### No.{{ item.issue_no }}｜{{ item.raw.problem_description|display }}
+
+- 产品／区域／工位：{{ item.raw.product|display }}／{{ item.raw.area|display }}／{{ item.raw.station|display }}。
+- 原始日期：{{ item.raw.when|display }}；负责人：{{ item.raw.owner|display }}；原始状态：{{ item.raw.status|display }}。
+- 来源：{{ item.source_file }} › {{ item.sheet_name }} › 第 {{ item.raw.source_row }} 行。
+{% else %}
+
+当前范围没有明确标为未关闭的记录；不代表全部问题已关闭。
+{% endfor %}
+
+## 待确认事项（涉及 {{ report.pending|length }} 条问题）
+{% for item in report.pending %}
+
+### No.{{ item.issue_no }}｜{{ item.raw.problem_description|display }}
+
+原始日期：{{ item.raw.when|display }}；原始状态：{{ item.raw.status|display }}。
+{% for note in item.notes %}
+
+- {{ note }}
+{% endfor %}
+
+来源：{{ item.source_file }} › {{ item.sheet_name }} › 第 {{ item.raw.source_row }} 行。
+{% else %}
+
+按本版检查规则未发现待确认项，不代表所有信息均已现场验证。
+{% endfor %}
+
+说明：分布按原值统计，不合并 Close、Closed、close 等写法；关闭汇总仅识别 Close/Closed，done 不自动视为关闭。已关闭不等于措施已验证有效。
+待确认项只来自缺失字段、日期/状态检查及已有未过期整理中的待补充/待核对内容；没有自动对全部问题进行模型分析，也不推断超期。

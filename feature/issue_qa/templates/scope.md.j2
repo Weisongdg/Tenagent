@@ -1,0 +1,7 @@
+查询范围：当前已入库的原始记录；{{ conditions }}。
+{% if result.filters.keywords %}
+检索词：{{ result.filters.keywords|join('、') }}；规则：{{ '任一词命中' if result.filters.keyword_mode == 'any' else '全部词命中，可分布在不同字段' }}。
+检索字段：问题描述、原因、措施；使用字面子串匹配，英文字母忽略大小写。
+以下是按上述检索词命中的记录，不等于已经确认其问题分类。
+{% endif %}
+不同来源的记录分别计数；不自动合并同号问题，原始状态不等于措施执行或有效性结论。

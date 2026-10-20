@@ -1,0 +1,24 @@
+{% include 'scope.md.j2' %}
+
+**匹配总数：{{ result.total }} 条；按{{ labels[result.group_by] }}分组，共 {{ result.total_groups }} 组。**
+数量和分组均由数据库计算；按字段原值分组，不合并 Closed、Close 等不同写法。
+{% if result.groups %}
+当前展示：第 {{ result.offset + 1 }}～{{ result.offset + result.groups|length }} 组。
+{% for group in result.groups %}
+
+**{{ group.value|display }}：{{ group.count }} 条**
+
+示例记录（最多 2 条，仅为该组部分依据）：
+{% for hit in group.examples %}
+- No.{{ hit.issue_no }}｜{{ hit.issue.problem_description|display }}；来源：{{ hit.source_file }} › {{ hit.sheet_name }} › 第 {{ hit.issue.source_row }} 行（{{ hit.column_mapping[result.group_by] }}{{ hit.issue.source_row }}）。
+{% endfor %}
+{% endfor %}
+{% elif result.total == 0 %}
+当前条件未检索到记录；这不代表不存在语义相关的问题。
+{% else %}
+当前页没有分组，请调整 offset；总匹配数不变。
+{% endif %}
+{% if result.next_offset is not none %}
+
+尚有后续分组；查看下一页时保留筛选和分组字段，offset={{ result.next_offset }}，limit={{ result.limit }}。
+{% endif %}

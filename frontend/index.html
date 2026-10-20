@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tenagent · 问题工作台</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/marked.umd.js" defer></script>
+  <script src="vendor/purify.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/">T<span>Tenagent<small>生产问题工作台</small></span></a>
+    <div class="section-label">工作空间</div>
+    <nav aria-label="主导航">
+      <button data-page="chat" class="active">◉　聊天助手</button>
+      <button data-page="library">▦　问题库</button>
+      <button data-page="reports">▤　汇总报告</button>
+    </nav>
+    <div class="sessions">
+      <div class="section-label">会话记录</div>
+      <form id="new-session"><input name="title" aria-label="新会话标题" placeholder="新会话标题" maxlength="200"><button aria-label="新建会话">＋</button></form>
+      <div id="session-list"></div>
+    </div>
+    <footer><span class="dot"></span> 本地工作空间<br><small>原始记录可追溯 · 会话自动保存</small></footer>
+  </aside>
+  <main>
+    <header><span>WORKSPACE / <b id="breadcrumb">聊天助手</b></span><span class="badge">LOCAL</span></header>
+    <div id="notice" role="status" hidden></div>
+    <section id="chat" class="page">
+      <div class="page-heading"><p class="eyebrow">ISSUE ASSISTANT</p><h1>从问题到线索，让记录更清晰。</h1><p>查询历史问题、整理单条记录，或生成可核对的汇总报告。</p></div>
+      <div id="messages" aria-live="polite"></div>
+      <div id="suggestions" class="suggestions"><button> L136 有哪些问题？</button><button>生成 6 的小卡片</button><button>生成全部问题的汇总报告</button></div>
+      <form id="chat-form" class="composer"><textarea name="text" aria-label="聊天消息" placeholder="输入问题，Enter 发送，Shift + Enter 换行" rows="2" required maxlength="20000"></textarea><button class="primary" type="submit">发送 ↗</button></form>
+      <p class="hint">模型整理结果需人工核对；检查正常或状态恢复不代表措施有效。</p>
+    </section>
+    <section id="library" class="page" hidden>
+      <div class="page-heading"><p class="eyebrow">ISSUE LIBRARY</p><h1>本地问题库</h1><p>保留原始记录与来源，按范围精确查找。</p></div>
+      <details class="panel"><summary>Excel 入库与向量同步</summary><form id="import-form" class="import-form"><label>Excel 文件路径<input name="file_path" value="Process_Issue_Tracking.xlsx" required></label><label>工作表<input name="sheet_name" value="ProcessIssueTracking" required></label><button class="primary">导入 / 更新 Excel</button></form><div class="sync-row"><button id="sync">同步向量索引</button><small>导入更新后手动同步；会调用嵌入接口处理全部入库记录。</small></div></details>
+      <form id="library-filter" class="panel filters"></form>
+      <div class="table-heading"><h2>问题记录 <span id="issue-count">0</span></h2><div class="pagination"><button id="prev">上一页</button><span id="page-number">1</span><button id="next">下一页</button></div></div>
+      <div class="table-wrap"><table><thead><tr><th>编号</th><th>产品</th><th>区域 / 工位</th><th>问题描述</th><th>原始状态</th><th>来源</th></tr></thead><tbody id="issue-rows"></tbody></table></div>
+    </section>
+    <section id="reports" class="page" hidden>
+      <div class="page-heading"><p class="eyebrow">OVERVIEW & REPORTS</p><h1>汇总报告</h1><p>基于完整匹配记录计算分布、未关闭问题和待确认事项。</p></div>
+      <form id="report-filter" class="panel filters"></form>
+      <div id="report-result" hidden><div id="metrics" class="metrics"></div><div class="report-toolbar"><small id="report-time"></small><button id="download">下载 Markdown</button></div><article id="report-content" class="panel markdown"></article></div>
+      <div id="report-empty" class="empty panel">选择报告范围，生成第一份汇总。<small>数量由程序计算，日期或状态不明确的地方会单独标出。</small></div>
+    </section>
+  </main>
+</body>
+</html>

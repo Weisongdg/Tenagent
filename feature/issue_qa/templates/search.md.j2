@@ -1,0 +1,30 @@
+{% include 'scope.md.j2' %}
+
+**匹配总数：{{ result.total }} 条**（数据库计算，每条入库问题计一次）。
+{% if result.issues %}
+当前展示：第 {{ result.offset + 1 }}～{{ result.offset + result.issues|length }} 条。
+{% for hit in result.issues %}
+
+**No.{{ hit.issue_no }}｜{{ hit.issue.product|display }} · {{ hit.issue.area|display }} · {{ hit.issue.station|display }}**
+
+原始问题：{{ hit.issue.problem_description|display }}
+原始状态：{{ hit.issue.status|display }}
+来源：{{ hit.source_file }} › {{ hit.sheet_name }} › 第 {{ hit.issue.source_row }} 行（{{ hit.column_mapping.problem_description }}{{ hit.issue.source_row }}）。
+{% for match in hit.matches %}
+
+命中原文 · {{ labels[match.field_name] }}（{{ match.cell }}）：
+
+```text
+{{ match.text }}
+```
+{% endfor %}
+{% endfor %}
+{% elif result.total == 0 %}
+当前条件未检索到记录；这不代表不存在语义相关的问题。
+{% else %}
+当前页没有记录，请调整 offset；总匹配数不变。
+{% endif %}
+{% if result.next_offset is not none %}
+
+尚有后续记录；查看下一页时保留上述条件，offset={{ result.next_offset }}，limit={{ result.limit }}。
+{% endif %}
